@@ -17,3 +17,26 @@ class paperscraper(self, date):
     # Initialise the class
     def __init__(self, date):
         self.date = date
+
+    # Define function to get links to all paper webpages
+    def get_links(self, date):
+        # Define URL for daily papers for given date
+        URL = f"{BASE_URL}/papers?date={date}"
+
+        # Parse the html from the daily papers page
+        response = requests.get(URL)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Initialise dictionary to store links into
+        papers = {}
+
+        # Extract links to individual papers using huggingface html structure
+        paper_links = soup.find_all('a', class_='line-clamp-3 cursor-pointer text-balance')
+
+        # Loop through papers to store paper_title: url pairs
+        for paper in paper_links:
+            paper_title = paper.text.strip()        # Get the title of the paper
+            paper_page_url = paper['href']          # Get the relative link to the paper's Hugging Face page
+            papers[paper_title] = paper_page_url    # Store the title: url pair into dict
+
+        return papers
