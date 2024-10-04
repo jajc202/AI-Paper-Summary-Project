@@ -40,6 +40,6 @@ class paperscraper:
         for paper in paper_links:
             paper_title = paper.text.strip()        # Get the title of the paper
             paper_page_url = paper['href']          # Get the relative link to the paper's Hugging Face page
-            papers[paper_title] = paper_page_url    # Store the title: url pair into dict
+            papers[paper_title] = f"{URL}{paper_page_url}"    # Store the title: url pair into dict
 
         return papers
