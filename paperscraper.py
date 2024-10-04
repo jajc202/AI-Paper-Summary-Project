@@ -43,3 +43,22 @@ class paperscraper:
             paper_pages[paper_title] = f"{BASE_URL}{paper_page_url}"    # Store the title: url pair into dict
 
         return paper_pages
+
+    
+    # Define function to get the link to each paper's pdf
+    def get_paper_text(self, paper_pages):
+        # Initialise dictionary to store links into
+        paper_pdfs = {}
+
+        # Loop through each paper in paper_pages dict
+        for paper, page in paper_pages.items():
+            # Parse the html from the paper's page
+            response = requests.get(page)
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Extract link to pdf
+            pdf_link = soup.find_all('a', class_='btn inline-flex h-9 items-center')
+
+            # Store pdf link
+            paper_pdfs[paper] = pdf_link
+
