@@ -31,7 +31,7 @@ class paperscraper:
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # Initialise dictionary to store links into
-        papers = {}
+        paper_pages = {}
 
         # Extract links to individual papers using huggingface html structure
         paper_links = soup.find_all('a', class_='line-clamp-3 cursor-pointer text-balance')
@@ -40,6 +40,6 @@ class paperscraper:
         for paper in paper_links:
             paper_title = paper.text.strip()        # Get the title of the paper
             paper_page_url = paper['href']          # Get the relative link to the paper's Hugging Face page
-            papers[paper_title] = f"{BASE_URL}{paper_page_url}"    # Store the title: url pair into dict
+            paper_pages[paper_title] = f"{BASE_URL}{paper_page_url}"    # Store the title: url pair into dict
 
-        return papers
+        return paper_pages
