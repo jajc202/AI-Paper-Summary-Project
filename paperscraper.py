@@ -12,7 +12,7 @@ import os
 BASE_URL = "https://huggingface.co"
 
 # Define class
-class paperscraper(self, date):
+class paperscraper:
 
     # Initialise the class
     def __init__(self, date):
@@ -22,7 +22,7 @@ class paperscraper(self, date):
         self.BASE_URL = "https://huggingface.co"
 
     # Define function to get links to all paper webpages
-    def get_links(self, date):
+    def get_links(self):
         # Define URL for daily papers for given date
         URL = f"{self.BASE_URL}/papers?date={self.date}"
 
