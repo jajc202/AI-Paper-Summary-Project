@@ -15,13 +15,14 @@ BASE_URL = "https://huggingface.co"
 class paperscraper(self, date):
 
     # Initialise the class
-    def __init__(self, date):
-        self.date = date
+    def __init__(self):
+        # Define base URL for HuggingFace
+        self.BASE_URL = "https://huggingface.co"
 
     # Define function to get links to all paper webpages
     def get_links(self, date):
         # Define URL for daily papers for given date
-        URL = f"{BASE_URL}/papers?date={date}"
+        URL = f"{self.BASE_URL}/papers?date={date}"
 
         # Parse the html from the daily papers page
         response = requests.get(URL)
