@@ -7,6 +7,8 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import PyPDF2
+import io
 
 # Define class
 class paperscraper:
@@ -41,4 +43,39 @@ class paperscraper:
             paper_pdfs[paper_title] = f"{self.PDF_BASE_URL}{paper_page_url.strip('/papers/')}"  # Store the title: url pair into dict
 
         return paper_pdfs
+    
+
+    # Define function to extract text from pdf link
+    def get_pdf_text(self, paper_pdfs):
+        # Initialise dictionary to store plain text into
+        pdf_texts = {}
+
+        # Loop through each paper
+        for paper, url in paper_pdfs.items():
+            try:
+                # Send a get request to the pdf url
+                response = requests.get(url)
+
+                # Check if the request was successful (status code 200)
+                if response.status_code == 200:
+                    # Read the PDF content from the response
+                    pdf_file = io.BytesIO(response.content)
+                    
+                    # Define a PyPDF2 reader
+                    reader = PyPDF2.PdfReader(pdf_file)
+
+                    # Extract the text
+                    text = ""
+                    for page in reader.pages:
+                        text += page.extract_text() + "\n"  # Adding a newline for separation
+
+                    # Save the text to the output dict
+                    pdf_texts[paper] = text
+                else:
+                    print(f"Failed to download PDF. Status code: {response.status_code}")
+
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        return pdf_texts
 
