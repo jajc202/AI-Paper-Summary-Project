@@ -95,7 +95,7 @@ class paperscraper:
 
                 # Find all the headers that represent sections and subsections (h2, h3, etc.)
                 # ArXiv HTML pages typically use <h2> for main sections and <h3> for subsections.
-                section_tags = soup.find_all(['h2', 'h3'])  # Adjust this based on the section hierarchy
+                section_tags = soup.find_all(['h2', 'h3', 'h6'])  # Adjust this based on the section hierarchy
 
                 # Iterate through each section header and capture its content
                 for tag in section_tags:
@@ -104,7 +104,7 @@ class paperscraper:
                     # Find the next sibling and extract all the text until the next section header is found
                     section_content = []
                     for sibling in tag.find_next_siblings():
-                        if sibling.name in ['h2', 'h3']:  # Stop if we reach a new section header
+                        if sibling.name in ['h2', 'h3', 'h6']:  # Stop if we reach a new section header
                             break
                         section_content.append(sibling.get_text(strip=True))
                     
