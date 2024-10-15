@@ -99,6 +99,11 @@ class paperscraper:
 
                 # Iterate through each section header and capture its content
                 for tag in section_tags:
+                    # Remove any <span> tags inside the header, which usually hold the section numbering
+                    for span in tag.find_all('span', class_='ltx_tag'):
+                        span.decompose()  # Removes the span tag from the soup
+
+                    # Get the section title without the numbering
                     section_title = tag.get_text(strip=True)
                     
                     # Find the next sibling and extract all the text until the next section header is found
