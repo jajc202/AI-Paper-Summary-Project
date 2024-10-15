@@ -46,14 +46,14 @@ class paperscraper:
     
     
     # Define function to extract html link from arxiv link
-    def get_html_link(self, paper_pages):
+    def get_html_links(self, paper_pages):
         # Initialise dictionary to store html into
         html_links = {}
 
         # Loop through each paper
         for paper, url in paper_pages.items():
             try:
-                # Send a get request to the pdf url
+                # Send a get request to the arxiv url
                 response = requests.get(url)
 
                 # Check if the request was successful (status code 200)
@@ -77,5 +77,46 @@ class paperscraper:
                 print(f"An error occurred: {e}")
 
         return html_links
+    
 
+    # Define function to create a dictionary of subheading: content for a html page
+    def html_subdivide(self, html_page):
+        try:
+            # Send a get request to the html url
+            response = requests.get(html_page)
+
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                # Parse the HTML content using BeautifulSoup
+                soup = BeautifulSoup(response.content, 'html.parser')
+
+                # Initialize dictionary to hold section titles and their content
+                html_divide = {}
+
+                # Find all the headers that represent sections and subsections (h2, h3, etc.)
+                # ArXiv HTML pages typically use <h2> for main sections and <h3> for subsections.
+                section_tags = soup.find_all(['h2', 'h3'])  # Adjust this based on the section hierarchy
+
+                # Iterate through each section header and capture its content
+                for tag in section_tags:
+                    section_title = tag.get_text(strip=True)
+                    
+                    # Find the next sibling and extract all the text until the next section header is found
+                    section_content = []
+                    for sibling in tag.find_next_siblings():
+                        if sibling.name in ['h2', 'h3']:  # Stop if we reach a new section header
+                            break
+                        section_content.append(sibling.get_text(strip=True))
+                    
+                    # Join the content list into a single string and save in the dictionary
+                    html_divide[section_title] = ' '.join(section_content)
+
+            else:
+                print(f"Failed to access html page. Status code: {response.status_code}")
+
+        except Exception as e:
+                print(f"An error occurred: {e}")
+
+        return html_divide
+        
 
