@@ -10,7 +10,7 @@ from PaperSummary import PaperSummary
 class DailyPaperSummarizer:
 
     # Initialise the class
-    def __init__(date, self):
+    def __init__(self, date):
         # Create instance of paperscraper
         self.PaperScraper = PaperScraper(date)
 
