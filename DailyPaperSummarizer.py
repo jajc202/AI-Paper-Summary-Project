@@ -34,10 +34,10 @@ class DailyPaperSummarizer:
     def format_summary(self, summary):
         # Define the section patterns based on keywords
         section_patterns = {
-            'Summary': r'\*\*.*summary.*\*\*',
-            'Specific Area of AI': r'\*\*.*area.*\*\*',
-            'Key Findings': r'\*\*.*findings.*\*\*',
-            'Real-World Applications': r'\*\*.*real.*\*\*'
+            'Summary': r'\*\*.*summary.*\*\*.*',
+            'Specific Area of AI': r'\*\*.*area.*\*\*.*',
+            'Key Findings': r'\*\*.*findings.*\*\*.*',
+            'Real-World Applications': r'\*\*.*real.*\*\*.*'
         }
         
         # Find all section start points
@@ -75,4 +75,4 @@ class DailyPaperSummarizer:
 
         # Apply post processing to each summary
         formatted_output = {name: self.format_summary(summary) for name, summary in summarized_papers.items()}
-        return formatted_output
+        return summarized_papers, formatted_output
