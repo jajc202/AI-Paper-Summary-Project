@@ -11,7 +11,7 @@ import PyPDF2
 import io
 
 # Define class
-class paperscraper:
+class PaperScraper:
 
     # Initialise the class
     def __init__(self, date):
