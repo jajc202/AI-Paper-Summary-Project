@@ -24,5 +24,5 @@ class DailyPaperSummarizer:
         pdf_dict = self.PaperScraper.get_pdf_text(paper_links)
 
         # Summarize each paper and save result in dictionary
-        summarized_papers = {name: self.PaperSummary(content) for name, content in pdf_dict.items()}
+        summarized_papers = {name: self.PaperSummary.paper_summarizer(content) for name, content in pdf_dict.items()}
         return summarized_papers
