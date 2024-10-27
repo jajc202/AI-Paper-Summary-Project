@@ -26,5 +26,5 @@ class PaperSummary:
         """
 
         # Summarize the text
-        summarized_text = chain.invoke(input=prompt)
+        summarized_text = self.model.invoke(input=prompt)
         return summarized_text
