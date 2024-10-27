@@ -12,7 +12,7 @@ class DailyPaperSummarizer:
     # Initialise the class
     def __init__(date, self):
         # Create instance of paperscraper
-        self.PaperScraper = PaperScraper(self.date)
+        self.PaperScraper = PaperScraper(date)
 
         # Create instance of PaperSummary
         self.PaperSummary = PaperSummary()
