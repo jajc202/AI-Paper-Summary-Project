@@ -36,8 +36,8 @@ class DailyPaperSummarizer:
         section_patterns = {
             'Summary': r'\*\*.*summary.*\*\*.*',
             'Specific Area of AI': r'\*\*.*area.*\*\*.*',
-            'Key Findings': r'\*\*.*findings.*\*\*.*',
-            'Real-World Applications': r'\*\*.*real.*\*\*.*'
+            'Key Findings': r'\*\*.*key.*findings.*\*\*.*',
+            'Real-World Applications': r'\*\*.*real.*world.*\*\*.*'
         }
         
         # Find all section start points
