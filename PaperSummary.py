@@ -1,5 +1,5 @@
 '''
-    Module:     papersummarizer.py
+    Module:     PaperSummary.py
     Purpose:    To summarise the text from an academic paper on AI/Machine Learning
 '''
 
