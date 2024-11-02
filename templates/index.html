@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Papers Carousel</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #040d13;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2a9d8f;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        /* Carousel Container */
+        .carousel-container {
+            width: 100%;
+            max-width: 600px;
+            overflow-x: scroll;
+            display: flex;
+            gap: 20px;
+            padding: 10px;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+        }
+
+        /* Hide scrollbar for WebKit browsers */
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Paper Box Styling */
+        .paper-box {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            min-width: 100%;
+            box-sizing: border-box;
+            scroll-snap-align: center;
+        }
+
+        h2 {
+            color: #264653;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            color: #2a9d8f;
+            font-size: 1.3em;
+            margin: 10px 0 5px;
+        }
+
+        p {
+            color: #555;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        /* Initially hidden content */
+        .more-info {
+            overflow: hidden;
+            max-height: 0;
+            padding-top: 0;
+            transition: max-height 0.5s ease, padding-top 0.5s ease;
+        }
+
+        .paper-box.expanded .more-info {
+            max-height: 1000px; /* Large enough to fit all content */
+            padding-top: 10px;
+        }
+
+        .expand-btn {
+            background-color: #2a9d8f;
+            color: #fff;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Bitesize AI Papers</h1>
+        <div class="carousel-container" id="carousel-container">
+            {% for title, content in papers.items() %}
+                <div class="paper-box">
+                    <h2>{{ title }}</h2>
+                    <h3>Summary</h3>
+                    <p>{{ content['Summary'] }}</p>
+                    
+                    <div class="more-info">
+                        <h3>Specific Area of AI</h3>
+                        <p>{{ content['Specific Area of AI'] }}</p>
+                        <h3>Key Findings</h3>
+                        <p>{{ content['Key Findings'] }}</p>
+                        <h3>Real-World Applications</h3>
+                        <p>{{ content['Real-World Applications'] }}</p>
+                    </div>
+
+                    <button class="expand-btn" onclick="toggleExpand(this)">Click to Expand</button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Toggle expand function for "more-info" sections
+        function toggleExpand(button) {
+            const paperBox = button.parentElement;
+            const moreInfo = paperBox.querySelector('.more-info');
+            const isExpanded = paperBox.classList.contains('expanded');
+
+            if (isExpanded) {
+                paperBox.classList.remove('expanded');
+                moreInfo.style.maxHeight = '0';
+                button.textContent = 'Click to Expand';
+            } else {
+                paperBox.classList.add('expanded');
+                moreInfo.style.maxHeight = moreInfo.scrollHeight + 'px';
+                button.textContent = 'Click to Collapse';
+            }
+        }
+    </script>
+</body>
+</html>
