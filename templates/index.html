@@ -20,9 +20,10 @@
             padding: 20px;
             line-height: 1.6;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Allow stacking of title and carousel */
             align-items: center;
             height: 100vh;
+            overflow-y: auto; /* Allow vertical scrolling */
         }
 
         h1 {
@@ -30,6 +31,13 @@
             color: #2a9d8f;
             font-size: 2.5em;
             margin-bottom: 20px;
+            position: fixed; /* Make the title fixed */
+            top: 0; /* Align to the top of the page */
+            left: 0; /* Align to the left edge */
+            width: 100%; /* Full width */
+            background-color: #040d13; /* Background color to blend with body */
+            padding: 15px 0; /* Padding to make it look nice */
+            z-index: 10; /* Ensure it stays above other content */
         }
 
         /* Carousel Container */
@@ -39,7 +47,7 @@
             overflow-x: scroll;
             display: flex;
             gap: 20px;
-            padding: 10px;
+            padding: 80px 10px 10px; /* Add top padding to avoid overlap with the fixed title */
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
             
@@ -133,6 +141,9 @@
     </div>
 
     <script>
+        let lastScrollLeft = 0; // Keep track of the last horizontal scroll position
+        const carouselContainer = document.getElementById('carousel-container');
+
         // Toggle expand function for "more-info" sections
         function toggleExpand(button) {
             const paperBox = button.parentElement;
@@ -149,6 +160,22 @@
                 button.textContent = 'Click to Collapse';
             }
         }
+
+        // Collapse all expanded boxes when scrolling horizontally
+        carouselContainer.addEventListener('scroll', function() {
+            const scrollThreshold = 50; // Threshold to determine if the user scrolled to the next item
+            const currentScrollLeft = carouselContainer.scrollLeft;
+
+            if (Math.abs(currentScrollLeft - lastScrollLeft) > scrollThreshold) {
+                const expandedBoxes = document.querySelectorAll('.paper-box.expanded');
+                expandedBoxes.forEach(box => {
+                    const button = box.querySelector('.expand-btn');
+                    toggleExpand(button); // Collapse the box
+                });
+            }
+
+            lastScrollLeft = currentScrollLeft; // Update last scroll position
+        });
     </script>
 </body>
 </html>
