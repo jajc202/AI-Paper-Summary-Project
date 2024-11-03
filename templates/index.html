@@ -134,7 +134,7 @@
                         <p>{{ content['Real-World Applications'] }}</p>
                     </div>
 
-                    <button class="expand-btn" onclick="toggleExpand(this)">Click to Expand</button>
+                    <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
                 </div>
             {% endfor %}
         </div>
@@ -153,11 +153,11 @@
             if (isExpanded) {
                 paperBox.classList.remove('expanded');
                 moreInfo.style.maxHeight = '0';
-                button.textContent = 'Click to Expand';
+                button.textContent = 'Read more';
             } else {
                 paperBox.classList.add('expanded');
                 moreInfo.style.maxHeight = moreInfo.scrollHeight + 'px';
-                button.textContent = 'Click to Collapse';
+                button.textContent = 'Less';
             }
         }
 
