@@ -96,6 +96,13 @@
             margin: 10px 0 5px;
         }
 
+        .author-names {
+            color: #555;
+            font-size: 1em;
+            margin-bottom: 15px;
+            font-style: italic; /* Optional styling for authors */
+        }
+
         p {
             color: #555;
             font-size: 1em;
@@ -131,9 +138,15 @@
     <div>
         <h1>Bitesize AI Papers</h1>
         <div class="carousel-container" id="carousel-container">
-            {% for title, (content, url) in papers.items() %}
+            {% for title, (content, url, authors) in papers.items() %}
                 <div class="paper-box">
                     <h2><a href="{{ url }}" target="_blank">{{ title }}</a></h2>
+
+                    <!-- Author names displayed here -->
+                    <div class="author-names">
+                        {{ ", ".join(authors) }} <!-- Display authors separated by commas -->
+                    </div>
+
                     <h3>Summary</h3>
                     <p>{{ content['Summary'] }}</p>
                     
