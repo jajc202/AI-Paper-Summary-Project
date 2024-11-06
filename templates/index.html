@@ -78,6 +78,18 @@
             margin-bottom: 10px;
         }
 
+        h2 a {
+            display: inline-block; /* Ensures the scale effect applies */
+            color: inherit; /* Keep the same color as h2 */
+            text-decoration: none; /* Remove underline */
+            transition: color 0.2s ease, transform 0.2s ease; /* Smooth transition for hover effect */
+        }
+
+        h2 a:hover {
+            color: #2a9d8f; /* Slightly lighter shade on hover */
+            transform: scale(1.005); /* Slightly increase text size on hover */
+        }
+
         h3 {
             color: #2a9d8f;
             font-size: 1.3em;
@@ -119,9 +131,9 @@
     <div>
         <h1>Bitesize AI Papers</h1>
         <div class="carousel-container" id="carousel-container">
-            {% for title, content in papers.items() %}
+            {% for title, (content, url) in papers.items() %}
                 <div class="paper-box">
-                    <h2>{{ title }}</h2>
+                    <h2><a href="{{ url }}" target="_blank">{{ title }}</a></h2>
                     <h3>Summary</h3>
                     <p>{{ content['Summary'] }}</p>
                     
