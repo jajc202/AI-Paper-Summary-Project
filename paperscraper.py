@@ -20,6 +20,7 @@ class PaperScraper:
         # Define base URL for HuggingFace
         self.HF_BASE_URL = "https://huggingface.co"
         self.PDF_BASE_URL = "https://arxiv.org/pdf/"
+        self.ARXIV_BASE_URL = "https://arxiv.org/abs/"
 
     # Define function to get links to all paper pdfs
     def get_links(self):
@@ -40,7 +41,12 @@ class PaperScraper:
         for paper in paper_links:
             paper_title = paper.text.strip()                                                    # Get the title of the paper
             paper_page_url = paper['href']                                                      # Get the relative link to the paper's Hugging Face page
-            paper_pdfs[paper_title] = f"{self.PDF_BASE_URL}{paper_page_url.strip('/papers/')}"  # Store the title: url pair into dict
+            
+            # Store the title: [author, url] pair into dict
+            paper_pdfs[paper_title] = [
+                f"{self.ARXIV_BASE_URL}{paper_page_url.strip('/papers/')}",                     # URL of arxiv page                            
+                f"{self.PDF_BASE_URL}{paper_page_url.strip('/papers/')}",                       # URL of pdf
+            ]
 
         return paper_pdfs
     
@@ -51,7 +57,7 @@ class PaperScraper:
         pdf_texts = {}
 
         # Loop through each paper
-        for paper, url in paper_pdfs.items():
+        for paper, (_, url) in paper_pdfs.items():
             try:
                 # Send a get request to the pdf url
                 response = requests.get(url)
@@ -78,3 +84,35 @@ class PaperScraper:
                 print(f"An error occurred: {e}")
 
         return pdf_texts
+    
+    # Define function to get authors of the paper
+    def get_authors(self, paper_pdfs):
+        # Initialise dictionary to store author names into
+        authors = {}
+
+        # Loop through each paper
+        for paper, (arxix_url, _) in paper_pdfs.items():
+            try:
+                # Send a get request to the arxiv url
+                response = requests.get(arxix_url)
+
+                # Check if the request was successful (status code 200)
+                if response.status_code == 200:
+                    # Get html content from arxiv page
+                    soup = BeautifulSoup(response.content, 'html.parser')
+                    
+                    # Extract links to individual papers using huggingface html structure
+                    author_tags = soup.find_all('a', href=lambda href: href and 'searchtype=author' in href)
+                    
+                    # Extract and print the author names
+                    author_names = [tag.get_text() for tag in author_tags]
+
+                    # Save the authors to the output dict
+                    authors[paper] = author_names
+                else:
+                    print(f"Failed to download arxiv html. Status code: {response.status_code}")
+
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        return authors
