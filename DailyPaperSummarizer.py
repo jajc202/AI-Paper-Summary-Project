@@ -20,15 +20,16 @@ class DailyPaperSummarizer:
         # Create instance of PaperSummary
         self.PaperSummary = PaperSummary()
 
-    # Define function to summarize all papers from the date (and get links to their pdfs)
+    # Define function to summarize all papers from the date (and get links to their pdfs and author names)
     def daily_summary(self):
-        # Get dictionary of papers: content using PaperScraper
+        # Get dictionary of papers: content and papers: authors using PaperScraper
         paper_links = self.PaperScraper.get_links()
         pdf_dict = self.PaperScraper.get_pdf_text(paper_links)
+        author_dict = self.PaperScraper.get_authors(paper_links)
 
         # Summarize each paper and save result in dictionary
         summarized_papers = {name: self.PaperSummary.paper_summarizer(content) for name, content in pdf_dict.items()}
-        return paper_links, summarized_papers
+        return paper_links, summarized_papers, author_dict
 
     # Define function to post-process a summarized paper
     def format_summary(self, summary):
@@ -71,12 +72,13 @@ class DailyPaperSummarizer:
     # Define function to apply post-processing to each paper to give final output
     def summary_output(self):
         # Call daily_summary to get summarized outputs
-        paper_links, summarized_papers = self.daily_summary()
+        paper_links, summarized_papers, author_dict = self.daily_summary()
 
         # Apply post processing to each summary
         # Also save the links to the pdf of each paper
+        # Also save names of the authors of the paper
         formatted_output = {
-            name: [self.format_summary(summary), paper_links[name]]
+            name: [self.format_summary(summary), paper_links[name][0], author_dict[name]]
             for name, summary in summarized_papers.items()
         }
         return formatted_output
