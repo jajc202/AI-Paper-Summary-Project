@@ -51,7 +51,7 @@ class PaperScraper:
         return paper_pdfs
     
 
-    # Define function to extract text from pdf link
+    # Define function to extract text from pdf links
     def get_pdf_text(self, paper_pdfs):
         # Initialise dictionary to store plain text into
         pdf_texts = {}
