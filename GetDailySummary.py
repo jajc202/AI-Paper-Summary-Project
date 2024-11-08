@@ -9,7 +9,7 @@ from datetime import datetime
 from DailyPaperSummarizer import DailyPaperSummarizer
 
 # Path to your JSON file
-file_path = 'DailySummaryData.json'
+file_path = r"C:\Users\josha\OneDrive\Attachments\Documents\Python\AI Paper Summary Data\DailySummaryData.json"
 
 # Function to append daily data to the JSON file
 def append_daily_data():
