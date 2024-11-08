@@ -3,7 +3,7 @@
     Purpose:    Main engine for the webpage
 '''
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 import json
@@ -11,8 +11,8 @@ import json
 app = Flask(__name__)
 
 # Sample data: replace this with your actual dictionary
-with open('summarized_papers.json', 'r') as json_file:
-    papers = json.load(json_file)
+with open(r"C:\Users\josha\OneDrive\Attachments\Documents\Python\AI Paper Summary Data\DailySummaryData.json", 'r') as json_file:
+    papers_by_date = json.load(json_file)
 
 # Function to update the content
 def update_content():
@@ -22,7 +22,16 @@ def update_content():
 
 @app.route('/')
 def home():
-    return render_template('index.html', papers=papers)
+    return render_template('index.html')
+
+@app.route('/get_papers')
+def get_papers():
+    selected_date = request.args.get('date')
+    if selected_date in papers_by_date:
+        papers = papers_by_date[selected_date]
+        return jsonify(papers)
+    else:
+        return jsonify({"error": "No papers found for this date"})
 
 if __name__ == '__main__':
     # Initialize the scheduler
