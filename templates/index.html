@@ -20,10 +20,10 @@
             padding: 20px;
             line-height: 1.6;
             display: flex;
-            flex-direction: column; /* Allow stacking of title and carousel */
+            flex-direction: column;
             align-items: center;
             height: 100vh;
-            overflow-y: auto; /* Allow vertical scrolling */
+            overflow-y: auto;
         }
 
         h1 {
@@ -31,42 +31,52 @@
             color: #2a9d8f;
             font-size: 2.5em;
             margin-bottom: 20px;
-            position: fixed; /* Make the title fixed */
-            top: 0; /* Align to the top of the page */
-            left: 0; /* Align to the left edge */
-            width: 100%; /* Full width */
-            background-color: #040d13; /* Background color to blend with body */
-            padding: 15px 0; /* Padding to make it look nice */
-            z-index: 10; /* Ensure it stays above other content */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #040d13;
+            padding: 15px 0;
+            z-index: 10;
         }
 
-        /* Carousel Container */
+        .calendar-container {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            z-index: 11;
+        }
+
+        input[type="date"] {
+            padding: 5px;
+            font-size: 1em;
+            background-color: #2a9d8f;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
         .carousel-container {
             width: 100%;
             max-width: 600px;
             overflow-x: scroll;
             display: flex;
             gap: 20px;
-            padding: 80px 10px 10px; /* Add top padding to avoid overlap with the fixed title */
+            padding: 80px 10px 10px;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
-            
-            /* Hide scrollbar */
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
 
-        /* Hide scrollbar for WebKit browsers */
         .carousel-container::-webkit-scrollbar {
             display: none;
         }
 
-        /* Paper Box Styling */
         .paper-box {
             background: #ffffff;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
             min-width: 100%;
             box-sizing: border-box;
             scroll-snap-align: center;
@@ -79,28 +89,21 @@
         }
 
         h2 a {
-            display: inline-block; /* Ensures the scale effect applies */
-            color: inherit; /* Keep the same color as h2 */
-            text-decoration: none; /* Remove underline */
-            transition: color 0.2s ease, transform 0.2s ease; /* Smooth transition for hover effect */
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease, transform 0.2s ease;
         }
 
         h2 a:hover {
-            color: #2a9d8f; /* Slightly lighter shade on hover */
-            transform: scale(1.005); /* Slightly increase text size on hover */
-        }
-
-        h3 {
             color: #2a9d8f;
-            font-size: 1.3em;
-            margin: 10px 0 5px;
+            transform: scale(1.005);
         }
 
         .author-names {
             color: #555;
             font-size: 1em;
             margin-bottom: 15px;
-            font-style: italic; /* Optional styling for authors */
+            font-style: italic;
         }
 
         p {
@@ -109,7 +112,6 @@
             margin-bottom: 10px;
         }
 
-        /* Initially hidden content */
         .more-info {
             overflow: hidden;
             max-height: 0;
@@ -118,7 +120,7 @@
         }
 
         .paper-box.expanded .more-info {
-            max-height: 1000px; /* Large enough to fit all content */
+            max-height: 1000px;
             padding-top: 10px;
         }
 
@@ -136,40 +138,55 @@
 </head>
 <body>
     <div>
+        <div class="calendar-container">
+            <label for="date-picker">Select Date: </label>
+            <input type="date" id="date-picker" />
+        </div>
         <h1>Bitesize AI Papers</h1>
         <div class="carousel-container" id="carousel-container">
-            {% for title, (content, url, authors) in papers.items() %}
-                <div class="paper-box">
-                    <h2><a href="{{ url }}" target="_blank">{{ title }}</a></h2>
-
-                    <!-- Author names displayed here -->
-                    <div class="author-names">
-                        {{ ", ".join(authors) }} <!-- Display authors separated by commas -->
-                    </div>
-
-                    <h3>Summary</h3>
-                    <p>{{ content['Summary'] }}</p>
-                    
-                    <div class="more-info">
-                        <h3>Specific Area of AI</h3>
-                        <p>{{ content['Specific Area of AI'] }}</p>
-                        <h3>Key Findings</h3>
-                        <p>{{ content['Key Findings'] }}</p>
-                        <h3>Real-World Applications</h3>
-                        <p>{{ content['Real-World Applications'] }}</p>
-                    </div>
-
-                    <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
-                </div>
-            {% endfor %}
+            <!-- Papers will be dynamically loaded here -->
         </div>
     </div>
 
     <script>
-        let lastScrollLeft = 0; // Keep track of the last horizontal scroll position
-        const carouselContainer = document.getElementById('carousel-container');
+        document.getElementById('date-picker').addEventListener('change', function() {
+            const selectedDate = this.value;
+            fetch(`/get_papers?date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('carousel-container');
+                    container.innerHTML = ''; // Clear previous content
 
-        // Toggle expand function for "more-info" sections
+                    if (data.error) {
+                        container.innerHTML = `<p>${data.error}</p>`;
+                        return;
+                    }
+
+                    for (const [title, [content, url, authors]] of Object.entries(data)) {
+                        const paperBox = `
+                            <div class="paper-box">
+                                <h2><a href="${url}" target="_blank">${title}</a></h2>
+                                <div class="author-names">${authors.join(', ')}</div>
+                                <h3>Summary</h3>
+                                <p>${content['Summary']}</p>
+                                <div class="more-info">
+                                    <h3>Specific Area of AI</h3>
+                                    <p>${content['Specific Area of AI']}</p>
+                                    <h3>Key Findings</h3>
+                                    <p>${content['Key Findings']}</p>
+                                    <h3>Real-World Applications</h3>
+                                    <p>${content['Real-World Applications']}</p>
+                                </div>
+                                <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
+                            </div>`;
+                        container.innerHTML += paperBox;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching papers:', error);
+                });
+        });
+
         function toggleExpand(button) {
             const paperBox = button.parentElement;
             const moreInfo = paperBox.querySelector('.more-info');
@@ -185,22 +202,6 @@
                 button.textContent = 'Less';
             }
         }
-
-        // Collapse all expanded boxes when scrolling horizontally
-        carouselContainer.addEventListener('scroll', function() {
-            const scrollThreshold = 50; // Threshold to determine if the user scrolled to the next item
-            const currentScrollLeft = carouselContainer.scrollLeft;
-
-            if (Math.abs(currentScrollLeft - lastScrollLeft) > scrollThreshold) {
-                const expandedBoxes = document.querySelectorAll('.paper-box.expanded');
-                expandedBoxes.forEach(box => {
-                    const button = box.querySelector('.expand-btn');
-                    toggleExpand(button); // Collapse the box
-                });
-            }
-
-            lastScrollLeft = currentScrollLeft; // Update last scroll position
-        });
     </script>
 </body>
 </html>
