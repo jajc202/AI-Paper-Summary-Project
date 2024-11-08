@@ -149,6 +149,44 @@
     </div>
 
     <script>
+        let lastScrollLeft = 0; // Keep track of the last horizontal scroll position
+        const carouselContainer = document.getElementById('carousel-container');
+
+        // Toggle expand function for "more-info" sections
+        function toggleExpand(button) {
+            const paperBox = button.parentElement;
+            const moreInfo = paperBox.querySelector('.more-info');
+            const isExpanded = paperBox.classList.contains('expanded');
+
+            if (isExpanded) {
+                paperBox.classList.remove('expanded');
+                moreInfo.style.maxHeight = '0';
+                button.textContent = 'Read more';
+            } else {
+                paperBox.classList.add('expanded');
+                moreInfo.style.maxHeight = moreInfo.scrollHeight + 'px';
+                button.textContent = 'Less';
+            }
+        }
+
+        // Collapse all expanded boxes when scrolling horizontally
+        carouselContainer.addEventListener('scroll', function() {
+            const scrollThreshold = 50; // Threshold to determine if the user scrolled to the next item
+            const currentScrollLeft = carouselContainer.scrollLeft;
+
+            // If user scrolls more than a threshold, collapse expanded boxes
+            if (Math.abs(currentScrollLeft - lastScrollLeft) > scrollThreshold) {
+                const expandedBoxes = document.querySelectorAll('.paper-box.expanded');
+                expandedBoxes.forEach(box => {
+                    const button = box.querySelector('.expand-btn');
+                    toggleExpand(button); // Collapse the box
+                });
+            }
+
+            lastScrollLeft = currentScrollLeft; // Update last scroll position
+        });
+
+        // Event listener for date picker
         document.getElementById('date-picker').addEventListener('change', function() {
             const selectedDate = this.value;
             fetch(`/get_papers?date=${selectedDate}`)
@@ -186,22 +224,6 @@
                     console.error('Error fetching papers:', error);
                 });
         });
-
-        function toggleExpand(button) {
-            const paperBox = button.parentElement;
-            const moreInfo = paperBox.querySelector('.more-info');
-            const isExpanded = paperBox.classList.contains('expanded');
-
-            if (isExpanded) {
-                paperBox.classList.remove('expanded');
-                moreInfo.style.maxHeight = '0';
-                button.textContent = 'Read more';
-            } else {
-                paperBox.classList.add('expanded');
-                moreInfo.style.maxHeight = moreInfo.scrollHeight + 'px';
-                button.textContent = 'Less';
-            }
-        }
     </script>
 </body>
 </html>
