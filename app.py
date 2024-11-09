@@ -24,11 +24,18 @@ def update_content():
 def home():
     return render_template('index.html')
 
+# Define required keys set
+required_keys = {"Summary", "Specific Area of AI", "Key Findings", "Real-World Applications"}
+
 @app.route('/get_papers')
 def get_papers():
     selected_date = request.args.get('date')
     if selected_date in papers_by_date:
         papers = papers_by_date[selected_date]
+
+        # Filtering the dictionary for records only with all 4 keys
+        papers = {key: value for key, value in papers.items() if isinstance(value[0], dict) and set(value[0].keys()) == required_keys}
+
         return jsonify(papers)
     else:
         return jsonify({"error": "No papers found for this date"})
