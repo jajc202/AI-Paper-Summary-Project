@@ -5,7 +5,7 @@
 
 # Import dependencies
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from DailyPaperSummarizer import DailyPaperSummarizer
 
 # Path to your JSON file
@@ -42,17 +42,16 @@ def append_multiple_data():
 
     # Loop through weekdays and add summaries to data
     for day in weekdays:
-        # Get string of current date
-        date_string = day.strftime("%Y-%m-%d")
-
+        # Print progress string
+        print(f"Summarising papers for {day}...")
         # Create instance of DailyPaperSummarizer
-        summarizer = DailyPaperSummarizer(date_string)
+        summarizer = DailyPaperSummarizer(day)
 
         # Summarize the day's papers
         summarized_papers = summarizer.summary_output()
 
         # Append new data to the dictionary
-        data[date_string] = summarized_papers
+        data[day] = summarized_papers
 
     # Write the updated data back to the JSON file
     with open(file_path, 'w') as json_file:
