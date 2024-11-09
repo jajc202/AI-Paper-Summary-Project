@@ -26,18 +26,21 @@
             overflow-y: auto;
         }
 
-        h1 {
-            text-align: center;
-            color: #2a9d8f;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #040d13;
-            padding: 15px 0;
+        /* Title Box */
+        .title-box {
+            position: absolute;
+            top: 0px; /* Adjusted for spacing from top */
+            left: 50px; /* Added margin to the left */
+            background-color: #2a9d8f;
+            color: #f3f3f3;
+            padding: 10px 20px;
+            border-radius: 0px;
             z-index: 10;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            margin: 0; /* Remove margin to avoid extra space */
         }
 
         /* Date navigation container */
@@ -193,7 +196,11 @@
             <button id="next-day">Next &gt;</button>
         </div>
 
-        <h1>Bitesize AI Papers</h1>
+        <!-- Title Box with title in the top-left corner -->
+        <div class="title-box">
+            <h1>Bitesize AI Papers</h1>
+        </div>
+
         <div class="carousel-container" id="carousel-container">
             <!-- Papers will be dynamically loaded here -->
         </div>
@@ -246,7 +253,7 @@
 
                     for (const [title, [content, url, authors]] of Object.entries(data)) {
                         const authors_corrected = authors.length > 5 ? authors.slice(0, 6).concat(['et al.']) : authors;
-                        const paperBox = `
+                        const paperBox = ` 
                             <div class="paper-box">
                                 <h2><a href="${url}" target="_blank">${title}</a></h2>
                                 <div class="author-names">${authors_corrected.join(', ')}</div>
