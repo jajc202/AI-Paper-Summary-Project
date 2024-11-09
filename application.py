@@ -5,6 +5,7 @@
 
 from flask import Flask, render_template, request, jsonify
 import json
+from user_agents import parse
 
 app = Flask(__name__)
 
@@ -14,7 +15,14 @@ with open(r"C:\Users\josha\OneDrive\Attachments\Documents\Python\AI Paper Summar
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    user_agent = request.headers.get('User-Agent')
+    parsed_user_agent = parse(user_agent)
+
+    # Check if the user is on a mobile device
+    if parsed_user_agent.is_mobile:
+        return render_template('mobile_index.html')  # Your mobile-specific template
+    else:
+        return render_template('index.html')  # Your original desktop template
 
 # Define required keys set
 required_keys = {"Summary", "Specific Area of AI", "Key Findings", "Real-World Applications"}
