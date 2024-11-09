@@ -40,22 +40,64 @@
             z-index: 10;
         }
 
-        .calendar-container {
+        /* Date navigation container */
+        .date-navigation {
             position: fixed;
             top: 15px;
             right: 20px;
             z-index: 11;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        input[type="date"] {
-            padding: 5px;
+        /* Style the navigation buttons */
+        button {
+            padding: 5px 10px;
             font-size: 1em;
             background-color: #2a9d8f;
             color: #fff;
             border: none;
             border-radius: 4px;
+            cursor: pointer;
         }
 
+        /* Style the current date box */
+        .current-date-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 60px; /* Reduced width */
+            height: 60px; /* Reduced height */
+            font-size: 1.2em; /* Adjust font size for better fit */
+        }
+
+        /* Month part - red background with white text */
+        .month {
+            background-color: red;
+            color: white;
+            font-size: 0.75em; /* Adjusted font size */
+            text-transform: uppercase;
+            padding: 2px 0; /* Reduced padding */
+            width: 100%;
+            text-align: center;
+            border-radius: 4px 4px 0 0;
+        }
+
+        /* Day part - white background with black text */
+        .day {
+            background-color: white;
+            color: black;
+            font-size: 1.2em; /* Adjusted font size */
+            font-weight: bold;
+            padding: 5px 0; /* Reduced padding */
+            width: 100%;
+            text-align: center;
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* Carousel container */
         .carousel-container {
             width: 100%;
             max-width: 600px;
@@ -138,10 +180,19 @@
 </head>
 <body>
     <div>
-        <div class="calendar-container">
-            <label for="date-picker">Select Date: </label>
-            <input type="date" id="date-picker" />
+        <!-- Date Navigation Section -->
+        <div class="date-navigation">
+            <button id="prev-day">&lt; Prev</button>
+
+            <!-- Current Date Box -->
+            <div id="current-date" class="current-date-box">
+                <div class="month"></div>
+                <div class="day"></div>
+            </div>
+
+            <button id="next-day">Next &gt;</button>
         </div>
+
         <h1>Bitesize AI Papers</h1>
         <div class="carousel-container" id="carousel-container">
             <!-- Papers will be dynamically loaded here -->
@@ -152,21 +203,71 @@
         let lastScrollLeft = 0; // Keep track of the last horizontal scroll position
         const carouselContainer = document.getElementById('carousel-container');
 
-        // Toggle expand function for "more-info" sections
-        function toggleExpand(button) {
-            const paperBox = button.parentElement;
-            const moreInfo = paperBox.querySelector('.more-info');
-            const isExpanded = paperBox.classList.contains('expanded');
+        // Get today's date as default
+        let currentDate = new Date();
+        const dateDisplay = document.getElementById('current-date');
 
-            if (isExpanded) {
-                paperBox.classList.remove('expanded');
-                moreInfo.style.maxHeight = '0';
-                button.textContent = 'Read more';
-            } else {
-                paperBox.classList.add('expanded');
-                moreInfo.style.maxHeight = moreInfo.scrollHeight + 'px';
-                button.textContent = 'Less';
-            }
+        function formatDate(date) {
+            return date.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+        }
+
+        function updateDateDisplay() {
+            // Update the month and day display
+            const options = { month: 'short', day: 'numeric' };
+            const formattedDate = currentDate.toLocaleDateString('en-US', options);
+            const [month, day] = formattedDate.split(" ");
+
+            dateDisplay.querySelector('.month').textContent = month;
+            dateDisplay.querySelector('.day').textContent = day;
+
+            fetchPapers(formatDate(currentDate));
+        }
+
+        function changeDate(days) {
+            currentDate.setDate(currentDate.getDate() + days);
+            updateDateDisplay();
+        }
+
+        // Event listeners for navigation buttons
+        document.getElementById('prev-day').addEventListener('click', () => changeDate(-1));
+        document.getElementById('next-day').addEventListener('click', () => changeDate(1));
+
+        // Fetch and display papers
+        function fetchPapers(date) {
+            fetch(`/get_papers?date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    carouselContainer.innerHTML = ''; // Clear previous content
+
+                    if (data.error) {
+                        carouselContainer.innerHTML = `<p>${data.error}</p>`;
+                        return;
+                    }
+
+                    for (const [title, [content, url, authors]] of Object.entries(data)) {
+                        const authors_corrected = authors.length > 5 ? authors.slice(0, 6).concat(['et al.']) : authors;
+                        const paperBox = `
+                            <div class="paper-box">
+                                <h2><a href="${url}" target="_blank">${title}</a></h2>
+                                <div class="author-names">${authors_corrected.join(', ')}</div>
+                                <h3>Summary</h3>
+                                <p>${content['Summary']}</p>
+                                <div class="more-info">
+                                    <h3>Specific Area of AI</h3>
+                                    <p>${content['Specific Area of AI']}</p>
+                                    <h3>Key Findings</h3>
+                                    <p>${content['Key Findings']}</p>
+                                    <h3>Real-World Applications</h3>
+                                    <p>${content['Real-World Applications']}</p>
+                                </div>
+                                <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
+                            </div>`;
+                        carouselContainer.innerHTML += paperBox;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching papers:', error);
+                });
         }
 
         // Collapse all expanded boxes when scrolling horizontally
@@ -186,44 +287,25 @@
             lastScrollLeft = currentScrollLeft; // Update last scroll position
         });
 
-        // Event listener for date picker
-        document.getElementById('date-picker').addEventListener('change', function() {
-            const selectedDate = this.value;
-            fetch(`/get_papers?date=${selectedDate}`)
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('carousel-container');
-                    container.innerHTML = ''; // Clear previous content
+        // Toggle expand function for "more-info" sections
+        function toggleExpand(button) {
+            const paperBox = button.parentElement;
+            const moreInfo = paperBox.querySelector('.more-info');
+            const isExpanded = paperBox.classList.contains('expanded');
 
-                    if (data.error) {
-                        container.innerHTML = `<p>${data.error}</p>`;
-                        return;
-                    }
+            if (isExpanded) {
+                paperBox.classList.remove('expanded');
+                moreInfo.style.maxHeight = '0';
+                button.textContent = 'Read more';
+            } else {
+                paperBox.classList.add('expanded');
+                moreInfo.style.maxHeight = moreInfo.scrollHeight + 'px';
+                button.textContent = 'Less';
+            }
+        }
 
-                    for (const [title, [content, url, authors]] of Object.entries(data)) {
-                        const paperBox = `
-                            <div class="paper-box">
-                                <h2><a href="${url}" target="_blank">${title}</a></h2>
-                                <div class="author-names">${authors.join(', ')}</div>
-                                <h3>Summary</h3>
-                                <p>${content['Summary']}</p>
-                                <div class="more-info">
-                                    <h3>Specific Area of AI</h3>
-                                    <p>${content['Specific Area of AI']}</p>
-                                    <h3>Key Findings</h3>
-                                    <p>${content['Key Findings']}</p>
-                                    <h3>Real-World Applications</h3>
-                                    <p>${content['Real-World Applications']}</p>
-                                </div>
-                                <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
-                            </div>`;
-                        container.innerHTML += paperBox;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching papers:', error);
-                });
-        });
+        // Load today's papers on page load
+        document.addEventListener('DOMContentLoaded', updateDateDisplay);
     </script>
 </body>
 </html>
