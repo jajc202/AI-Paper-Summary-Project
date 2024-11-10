@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Academic Papers Carousel</title>
+    <title>Bitesize AI</title>
     <style>
         /* Basic Reset */
         * {
@@ -16,13 +16,14 @@
             font-family: 'Courier New', Courier, monospace;
             background-color: #040d13;
             color: #333;
-            padding: 10px;
+            padding: 20px 10px 10px 10px; /* Add more padding at the top */
             line-height: 1.5;
             display: flex;
             flex-direction: column;
             align-items: center;
             height: 100vh;
             overflow-y: auto;
+            position: relative; /* Add position relative for absolute positioning inside */
         }
 
         /* Title Box */
@@ -30,10 +31,13 @@
             background-color: #2a9d8f;
             color: #f3f3f3;
             padding: 5px 15px;
-            border-radius: 4px;
+            border-radius: 0px;
             margin-bottom: 10px;
             text-align: center;
-            width: 100%;
+            position: absolute;
+            top: 0px; /* Adjust as needed for vertical offset */
+            left: 15px; /* Adjust as needed for horizontal offset */
+            width: auto; /* Adjust or set to a specific width if needed */
         }
 
         h1 {
@@ -43,21 +47,32 @@
         /* Date navigation container */
         .date-navigation {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            width: 100%;
-            margin-bottom: 10px;
+            position: absolute;
+            top: 10px; /* Adjust as needed for vertical offset */
+            right: 15px; /* Adjust as needed for horizontal offset */
+            gap: 10px;
         }
 
+
+        /* Smaller buttons */
         button {
             padding: 5px 10px;
-            font-size: 0.9em;
+            font-size: 1em; /* Adjust for smaller size */
             background-color: #2a9d8f;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
+
+        /* Change button size to make them smaller */
+        #prev-day, #next-day {
+            font-size: 1.2em; /* Make the buttons a bit smaller */
+            padding: 4px 8px;
+        }
+
 
         /* Current date display */
         .current-date-box {
@@ -98,6 +113,7 @@
             padding: 10px 0;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
+            margin-top: 70px; /* Add margin-top to push the carousel down below the calendar */
         }
 
         .carousel-container::-webkit-scrollbar {
@@ -171,7 +187,7 @@
 <body>
     <!-- Date Navigation Section -->
     <div class="date-navigation">
-        <button id="prev-day">&lt; Prev</button>
+        <button id="prev-day">&lt;</button>
 
         <!-- Current Date Box -->
         <div id="current-date" class="current-date-box">
@@ -179,7 +195,7 @@
             <div class="day"></div>
         </div>
 
-        <button id="next-day">Next &gt;</button>
+        <button id="next-day">&gt;</button>
     </div>
 
     <!-- Title Box with title centered at the top -->
