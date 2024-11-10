@@ -10,8 +10,8 @@ class PaperSummary:
     
     # Initialise the class
     def __init__(self):
-        # Initialise the model (Llama 3.2 - 1B)
-        self.model = OllamaLLM(model="llama3.2:1b", seed=44)
+        # Initialise the model (Llama 3.2 - 3B)
+        self.model = OllamaLLM(model="llama3.2", seed=44)
 
     # Define function to summarize the text
     def paper_summarizer(self, text):
