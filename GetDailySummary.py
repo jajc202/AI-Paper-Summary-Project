@@ -78,3 +78,22 @@ elif response.status_code == 201:
     print("WARNING: New data file created. Check files directory.")
 else:
     print(f"Failed to upload file. Status code: {response.status_code}")
+
+
+#--------------------------------------------------------------------------------------------------------------
+#   Refresh the site
+#--------------------------------------------------------------------------------------------------------------
+# Set website domain name
+domain_name = 'bitesizeai.pythonanywhere.com'
+
+# Reload website
+response = requests.post(
+    f'https://{host}/api/v0/user/{username}/webapps/{domain_name}/reload/',
+    headers={'Authorization': f'Token {api_token}'}
+)
+
+# Display results info
+if response.status_code == 200:
+    print("Page reloaded successfully.")
+else:
+    print('Got unexpected status code {}: {!r}'.format(response.status_code, response.content))
