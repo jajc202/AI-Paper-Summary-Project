@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
     <title>Academic Papers Carousel</title>
     <style>
         /* Basic Reset */
@@ -128,6 +131,7 @@
         }
 
         h2 {
+            font-family: 'Geist Mono', monospace; /* Apply the Geist Mono font */
             color: #264653;
             font-size: 1.8em;
             margin-bottom: 10px;
@@ -253,7 +257,7 @@
 
                     for (const [title, [content, url, authors]] of Object.entries(data)) {
                         const authors_corrected = authors.length > 5 ? authors.slice(0, 6).concat(['et al.']) : authors;
-                        const paperBox = ` 
+                        const paperBox = `
                             <div class="paper-box">
                                 <h2><a href="${url}" target="_blank">${title}</a></h2>
                                 <div class="author-names">${authors_corrected.join(', ')}</div>
