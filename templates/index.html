@@ -46,67 +46,46 @@
             margin: 0; /* Remove margin to avoid extra space */
         }
 
-        /* Date navigation container */
+        /* Date Navigation Container */
         .date-navigation {
             position: fixed;
-            top: 15px;
-            right: 20px;
-            z-index: 11;
+            top: 0px;
+            right: 50px; /* Adjusted left margin */
+            z-index: 10;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
+        /* Date Display Box */
+        .current-date-box {
+            background-color: #2a9d8f;
+            color: #f3f3f3;
+            padding: 10px 20px;
+            border-radius: 0px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
         /* Style the navigation buttons */
         button {
-            padding: 5px 10px;
-            font-size: 1em;
+            padding: 0 15px;  /* Horizontal padding to make buttons wider */
+            font-size: 1.2em;  /* Increased font size for better visibility */
             background-color: #2a9d8f;
             color: #fff;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-        }
-
-        /* Style the current date box */
-        .current-date-box {
+            height: 40px;  /* Match the height of the date box */
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 60px; /* Reduced width */
-            height: 60px; /* Reduced height */
-            font-size: 1.2em; /* Adjust font size for better fit */
-        }
-
-        /* Month part - red background with white text */
-        .month {
-            background-color: red;
-            color: white;
-            font-size: 0.75em; /* Adjusted font size */
-            text-transform: uppercase;
-            padding: 2px 0; /* Reduced padding */
-            width: 100%;
-            text-align: center;
-            border-radius: 4px 4px 0 0;
-        }
-
-        /* Day part - white background with black text */
-        .day {
-            background-color: white;
-            color: black;
-            font-size: 1.2em; /* Adjusted font size */
-            font-weight: bold;
-            padding: 5px 0; /* Reduced padding */
-            width: 100%;
-            text-align: center;
-            border-radius: 0 0 4px 4px;
         }
 
         /* Carousel container */
         .carousel-container {
             position: absolute;
-            left: 50px; /* Added margin to the left */
+            left: 50px; /* Adjusted margin */
             width: 100%;
             max-width: 1200px;
             overflow-x: scroll;
@@ -214,15 +193,11 @@
     <div>
         <!-- Date Navigation Section -->
         <div class="date-navigation">
-            <button id="prev-day">&lt; Prev</button>
-
-            <!-- Current Date Box -->
-            <div id="current-date" class="current-date-box">
-                <div class="month"></div>
-                <div class="day"></div>
+            <button id="prev-day">&lt;</button>
+            <div class="current-date-box" id="current-date-box">
+                <!-- Current date will be inserted here -->
             </div>
-
-            <button id="next-day">Next &gt;</button>
+            <button id="next-day">&gt;</button>
         </div>
 
         <!-- Title Box with title in the top-left corner -->
@@ -238,23 +213,40 @@
     <script>
         let lastScrollLeft = 0; // Keep track of the last horizontal scroll position
         const carouselContainer = document.getElementById('carousel-container');
+        const currentDateBox = document.getElementById('current-date-box');
 
         // Get today's date as default
         let currentDate = new Date();
-        const dateDisplay = document.getElementById('current-date');
 
         function formatDate(date) {
-            return date.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+            // Format date as YYYY-MM-DD
+            return date.toISOString().split('T')[0];
+        }
+
+        // Function to get the ordinal suffix (st, nd, rd, th)
+        function getOrdinalSuffix(day) {
+            const j = day % 10;
+            const k = day % 100;
+            if (j === 1 && k !== 11) {
+                return day + "st";
+            }
+            if (j === 2 && k !== 12) {
+                return day + "nd";
+            }
+            if (j === 3 && k !== 13) {
+                return day + "rd";
+            }
+            return day + "th";
         }
 
         function updateDateDisplay() {
-            // Update the month and day display
-            const options = { month: 'short', day: 'numeric' };
+            // Get the current date in "Month Day" format
+            const options = { month: 'long', day: 'numeric' };
             const formattedDate = currentDate.toLocaleDateString('en-US', options);
             const [month, day] = formattedDate.split(" ");
+            const dayWithSuffix = getOrdinalSuffix(parseInt(day));
 
-            dateDisplay.querySelector('.month').textContent = month;
-            dateDisplay.querySelector('.day').textContent = day;
+            currentDateBox.textContent = `${month} ${dayWithSuffix}`;
 
             fetchPapers(formatDate(currentDate));
         }
@@ -305,7 +297,7 @@
                     console.error('Error fetching papers:', error);
                 });
         }
-
+        
         // Collapse all expanded boxes when scrolling horizontally
         carouselContainer.addEventListener('scroll', function() {
             const scrollThreshold = 50; // Threshold to determine if the user scrolled to the next item
