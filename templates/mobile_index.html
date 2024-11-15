@@ -17,7 +17,7 @@
 
         body {
             font-family: 'Courier New', Courier, monospace;
-            background-color: #040d13;
+            background-color: #161616;
             color: #333;
             padding: 20px 10px 10px 10px; /* Add more padding at the top */
             line-height: 1.5;
@@ -125,10 +125,10 @@
         }
 
         .paper-box {
-            background: #ffffff;
+            background: #22222200;
             border-radius: 8px;
             padding: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             min-width: 85vw;
             max-width: 90vw;
             scroll-snap-align: center;
@@ -136,9 +136,8 @@
 
         h2 {
             font-family: 'Geist Mono', monospace; /* Apply the Geist Mono font */
-            color: #264653;
+            color: #2a9d8f;
             font-size: 1.2em;
-            margin-bottom: 5px;
         }
 
         h2 a {
@@ -148,26 +147,42 @@
         }
 
         h2 a:hover {
-            color: #2a9d8f;
+            color: #bcecff;
             transform: scale(1.005);
         }
 
         .author-names {
-            color: #555;
+            color: #aaa;
             font-size: 0.9em;
-            margin-bottom: 10px;
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
             font-style: italic;
         }
 
-        h3 {
-            font-family: 'Geist Mono', monospace; /* Apply the Geist Mono font */
+        .info-pair {
+            background: linear-gradient(135deg, rgba(190, 190, 190, 0.1), rgba(63, 63, 63, 0.2)); /* Subtle gradient */
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.593);
+            display: flex;
+            flex-direction: column; /* Changed from row to column for vertical stacking */
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            padding: 1rem;
         }
 
-        p {
-            font-family: 'Geist Mono', monospace; /* Apply the Geist Mono font */
-            color: #555;
-            font-size: 0.9em;
-            margin-bottom: 10px;
+        .info-pair h3 {
+            font-family: 'Geist Mono', monospace;
+            margin: 0;
+            color: #2a9d8f;
+            font-size: 1.1em;
+            margin-bottom: 0.5rem; /* Space between heading and text */
+        }
+
+        .info-pair p {
+            font-family: 'Geist Mono', monospace;
+            margin: 0;
+            color: #ffffff;
+            font-size: 1em;
         }
 
         .more-info {
@@ -183,14 +198,31 @@
         }
 
         .expand-btn {
-            background-color: #2a9d8f;
+            background-color: #040d13;
             color: #fff;
-            padding: 5px 8px;
-            border: none;
+            padding: 8px 12px;
+            border: 2px solid silver;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9em;
-            margin-top: 5px;
+            font-size: 1em;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expand-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 300%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(192, 192, 192, 0.5), transparent);
+            transition: left 0.5s;
+        }
+
+        .expand-btn:hover::before {
+            left: 100%;
         }
     </style>
 </head>
@@ -260,63 +292,47 @@
                     }
 
                     for (const [title, [content, url, authors]] of Object.entries(data)) {
-                        const authors_corrected = authors.length > 5 ? authors.slice(0, 6).concat(['et al.']) : authors;
-                        const paperBox = `
-                            <div class="paper-box">
-                                <h2><a href="${url}" target="_blank">${title}</a></h2>
-                                <div class="author-names">${authors_corrected.join(', ')}</div>
+                        const authors_corrected = authors.length > 5 ? authors.slice(0, 5).concat('et al.') : authors;
+                        const paperBox = document.createElement('div');
+                        paperBox.classList.add('paper-box');
+
+                        paperBox.innerHTML = `
+                            <h2><a href="${url}" target="_blank">${title}</a></h2>
+                            <div class="author-names">${authors_corrected.join(', ')}</div>
+
+                            <div class="info-pair">
                                 <h3>Summary</h3>
                                 <p>${content['Summary']}</p>
-                                <div class="more-info">
-                                    <h3>Specific Area of AI</h3>
+                            </div>
+                            <div class="more-info">
+                                <div class="info-pair">
+                                    <h3>Topic Area</h3>
                                     <p>${content['Specific Area of AI']}</p>
+                                </div>
+                                <div class="info-pair">
                                     <h3>Key Findings</h3>
                                     <p>${content['Key Findings']}</p>
+                                </div>
+                                <div class="info-pair">
                                     <h3>Real-World Applications</h3>
                                     <p>${content['Real-World Applications']}</p>
                                 </div>
-                                <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
-                            </div>`;
-                        carouselContainer.innerHTML += paperBox;
+                            </div>
+                            <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
+                        `;
+                        carouselContainer.appendChild(paperBox);
                     }
-                })
-                .catch(error => {
-                    console.error('Error fetching papers:', error);
                 });
         }
-
-        carouselContainer.addEventListener('scroll', function() {
-            const scrollThreshold = 50;
-            const currentScrollLeft = carouselContainer.scrollLeft;
-
-            if (Math.abs(currentScrollLeft - lastScrollLeft) > scrollThreshold) {
-                const expandedBoxes = document.querySelectorAll('.paper-box.expanded');
-                expandedBoxes.forEach(box => {
-                    const button = box.querySelector('.expand-btn');
-                    toggleExpand(button);
-                });
-            }
-
-            lastScrollLeft = currentScrollLeft;
-        });
 
         function toggleExpand(button) {
-            const paperBox = button.parentElement;
-            const moreInfo = paperBox.querySelector('.more-info');
-            const isExpanded = paperBox.classList.contains('expanded');
-
-            if (isExpanded) {
-                paperBox.classList.remove('expanded');
-                moreInfo.style.maxHeight = '0';
-                button.textContent = 'Read more';
-            } else {
-                paperBox.classList.add('expanded');
-                moreInfo.style.maxHeight = moreInfo.scrollHeight + 'px';
-                button.textContent = 'Less';
-            }
+            const paperBox = button.closest('.paper-box');
+            paperBox.classList.toggle('expanded');
+            button.textContent = paperBox.classList.contains('expanded') ? 'Read less' : 'Read more';
         }
 
-        document.addEventListener('DOMContentLoaded', updateDateDisplay);
+        // Initial load
+        updateDateDisplay();
     </script>
 </body>
 </html>
