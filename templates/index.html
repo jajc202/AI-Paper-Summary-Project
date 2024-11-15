@@ -32,8 +32,8 @@
         /* Title Box */
         .title-box {
             position: absolute;
-            top: 0px; /* Adjusted for spacing from top */
-            left: 50px; /* Added margin to the left */
+            top: 0px;
+            left: 50px;
             background-color: #2a9d8f;
             color: #f3f3f3;
             padding: 10px 20px;
@@ -43,21 +43,20 @@
 
         h1 {
             font-size: 1.5em;
-            margin: 0; /* Remove margin to avoid extra space */
+            margin: 0;
         }
 
         /* Date Navigation Container */
         .date-navigation {
             position: fixed;
             top: 0px;
-            right: 50px; /* Adjusted left margin */
+            right: 50px;
             z-index: 10;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        /* Date Display Box */
         .current-date-box {
             background-color: #2a9d8f;
             color: #f3f3f3;
@@ -67,25 +66,23 @@
             font-weight: bold;
         }
 
-        /* Style the navigation buttons */
         button {
-            padding: 0 15px;  /* Horizontal padding to make buttons wider */
-            font-size: 1.2em;  /* Increased font size for better visibility */
+            padding: 0 15px;
+            font-size: 1.2em;
             background-color: #2a9d8f;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            height: 40px;  /* Match the height of the date box */
+            height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Carousel container */
         .carousel-container {
             position: absolute;
-            left: 50px; /* Adjusted margin */
+            left: 50px;
             width: 100%;
             max-width: 1200px;
             overflow-x: scroll;
@@ -102,17 +99,18 @@
         }
 
         .paper-box {
-            background: #ffffff00;
+            background: #22222200;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             min-width: 100%;
             box-sizing: border-box;
             scroll-snap-align: center;
+            color: #fff;
         }
 
         h2 {
-            font-family: 'Geist Mono', monospace; /* Apply the Geist Mono font */
+            font-family: 'Geist Mono', monospace;
             color: #bcecff;
             font-size: 1.8em;
             margin-bottom: 10px;
@@ -130,23 +128,33 @@
         }
 
         .author-names {
-            color: #555;
+            color: #aaa;
             font-size: 1em;
             margin-bottom: 15px;
             font-style: italic;
         }
 
-        h3 {
-            font-family: 'Geist Mono', monospace; /* Apply the Geist Mono font */
-            color: #2a9d8f;
+        .info-pair {
+            background: #222;
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            padding: 20px;
         }
 
-        p {
-            font-family: 'Geist Mono', monospace; /* Apply the Geist Mono font */
+        .info-pair h3 {
+            flex: 0 0 150px;
+            margin: 0;
+            color: #2a9d8f;
+            font-size: 1.1em;
+        }
+
+        .info-pair p {
+            flex: 1;
+            margin: 0;
             color: #ffffff;
             font-size: 1em;
-            margin-top: 0.5rem; /* Add space above the h3 */
-            margin-bottom: 2.5rem; /* Add space below the h3 */
         }
 
         .more-info {
@@ -165,7 +173,7 @@
             background-color: #040d13;
             color: #fff;
             padding: 8px 12px;
-            border: 2px solid silver; /* Silver border */
+            border: 2px solid silver;
             border-radius: 4px;
             cursor: pointer;
             font-size: 1em;
@@ -188,7 +196,6 @@
         .expand-btn:hover::before {
             left: 100%;
         }
-
     </style>
 </head>
 <body>
@@ -213,19 +220,15 @@
     </div>
 
     <script>
-        let lastScrollLeft = 0; // Keep track of the last horizontal scroll position
+        let lastScrollLeft = 0;
         const carouselContainer = document.getElementById('carousel-container');
         const currentDateBox = document.getElementById('current-date-box');
-
-        // Get today's date as default
         let currentDate = new Date();
 
         function formatDate(date) {
-            // Format date as YYYY-MM-DD
             return date.toISOString().split('T')[0];
         }
 
-        // Function to get the ordinal suffix (st, nd, rd, th)
         function getOrdinalSuffix(day) {
             const j = day % 10;
             const k = day % 100;
@@ -242,7 +245,6 @@
         }
 
         function updateDateDisplay() {
-            // Get the current date in "Month Day" format
             const options = { month: 'long', day: 'numeric' };
             const formattedDate = currentDate.toLocaleDateString('en-US', options);
             const [month, day] = formattedDate.split(" ");
@@ -258,16 +260,14 @@
             updateDateDisplay();
         }
 
-        // Event listeners for navigation buttons
         document.getElementById('prev-day').addEventListener('click', () => changeDate(-1));
         document.getElementById('next-day').addEventListener('click', () => changeDate(1));
 
-        // Fetch and display papers
         function fetchPapers(date) {
             fetch(`/get_papers?date=${date}`)
                 .then(response => response.json())
                 .then(data => {
-                    carouselContainer.innerHTML = ''; // Clear previous content
+                    carouselContainer.innerHTML = '';
 
                     if (data.error) {
                         carouselContainer.innerHTML = `<p>${data.error}</p>`;
@@ -275,67 +275,47 @@
                     }
 
                     for (const [title, [content, url, authors]] of Object.entries(data)) {
-                        const authors_corrected = authors.length > 5 ? authors.slice(0, 6).concat(['et al.']) : authors;
-                        const paperBox = `
-                            <div class="paper-box">
-                                <h2><a href="${url}" target="_blank">${title}</a></h2>
-                                <div class="author-names">${authors_corrected.join(', ')}</div>
+                        const authors_corrected = authors.length > 5 ? authors.slice(0, 5).concat('et al.') : authors;
+                        const paperBox = document.createElement('div');
+                        paperBox.classList.add('paper-box');
+
+                        paperBox.innerHTML = `
+                            <h2><a href="${url}" target="_blank">${title}</a></h2>
+                            <div class="author-names">${authors_corrected.join(', ')}</div>
+
+                            <div class="info-pair">
                                 <h3>Summary</h3>
                                 <p>${content['Summary']}</p>
-                                <div class="more-info">
+                            </div>
+                            <div class="more-info">
+                                <div class="info-pair">
                                     <h3>Specific Area of AI</h3>
                                     <p>${content['Specific Area of AI']}</p>
+                                </div>
+                                <div class="info-pair">
                                     <h3>Key Findings</h3>
                                     <p>${content['Key Findings']}</p>
+                                </div>
+                                <div class="info-pair">
                                     <h3>Real-World Applications</h3>
                                     <p>${content['Real-World Applications']}</p>
                                 </div>
-                                <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
-                            </div>`;
-                        carouselContainer.innerHTML += paperBox;
+                            </div>
+                            <button class="expand-btn" onclick="toggleExpand(this)">Read more</button>
+                        `;
+                        carouselContainer.appendChild(paperBox);
                     }
-                })
-                .catch(error => {
-                    console.error('Error fetching papers:', error);
                 });
         }
-        
-        // Collapse all expanded boxes when scrolling horizontally
-        carouselContainer.addEventListener('scroll', function() {
-            const scrollThreshold = 50; // Threshold to determine if the user scrolled to the next item
-            const currentScrollLeft = carouselContainer.scrollLeft;
 
-            // If user scrolls more than a threshold, collapse expanded boxes
-            if (Math.abs(currentScrollLeft - lastScrollLeft) > scrollThreshold) {
-                const expandedBoxes = document.querySelectorAll('.paper-box.expanded');
-                expandedBoxes.forEach(box => {
-                    const button = box.querySelector('.expand-btn');
-                    toggleExpand(button); // Collapse the box
-                });
-            }
-
-            lastScrollLeft = currentScrollLeft; // Update last scroll position
-        });
-
-        // Toggle expand function for "more-info" sections
         function toggleExpand(button) {
-            const paperBox = button.parentElement;
-            const moreInfo = paperBox.querySelector('.more-info');
-            const isExpanded = paperBox.classList.contains('expanded');
-
-            if (isExpanded) {
-                paperBox.classList.remove('expanded');
-                moreInfo.style.maxHeight = '0';
-                button.textContent = 'Read more';
-            } else {
-                paperBox.classList.add('expanded');
-                moreInfo.style.maxHeight = moreInfo.scrollHeight + 'px';
-                button.textContent = 'Less';
-            }
+            const paperBox = button.closest('.paper-box');
+            paperBox.classList.toggle('expanded');
+            button.textContent = paperBox.classList.contains('expanded') ? 'Read less' : 'Read more';
         }
 
-        // Load today's papers on page load
-        document.addEventListener('DOMContentLoaded', updateDateDisplay);
+        // Initial load
+        updateDateDisplay();
     </script>
 </body>
 </html>
