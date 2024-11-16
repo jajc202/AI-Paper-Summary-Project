@@ -198,31 +198,33 @@
         }
 
         .expand-btn {
-            background-color: #040d13;
+            font-family: 'Geist Mono', monospace; /* Apply the Geist Mono font */
+            background-color: #161616;
             color: #fff;
-            padding: 8px 12px;
-            border: 2px solid silver;
-            border-radius: 4px;
+            position: relative;
+            padding: 20px;
             cursor: pointer;
             font-size: 1em;
-            margin-top: 10px;
-            position: relative;
-            overflow: hidden;
+            box-sizing: border-box;
+            border-radius: 8px;
         }
 
         .expand-btn::before {
-            content: '';
+            content: ''; /* Required to create a pseudo-element */
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 300%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(192, 192, 192, 0.5), transparent);
-            transition: left 0.5s;
+            top: -1px; /* Align with the border's position */
+            left: -1px; /* Align with the border's position */
+            right: -1px;
+            bottom: -1px;
+            background: #2a9d8f; /* Gradient colors */
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.593);
+            z-index: -1; /* Place the pseudo-element behind the button */
+            border-radius: 8px;
+            transition: 0.5s;
         }
 
         .expand-btn:hover::before {
-            left: 100%;
+            background: #bcecff; /* Gradient colors */
         }
     </style>
 </head>
