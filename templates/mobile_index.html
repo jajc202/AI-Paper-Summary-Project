@@ -39,7 +39,7 @@
             text-align: center;
             position: absolute;
             top: 0px; /* Adjust as needed for vertical offset */
-            left: 15px; /* Adjust as needed for horizontal offset */
+            left: 1rem; /* Adjust as needed for horizontal offset */
             width: auto; /* Adjust or set to a specific width if needed */
         }
 
@@ -47,65 +47,56 @@
             font-size: 1.2em;
         }
 
-        /* Date navigation container */
+        /* Date Navigation Container */
         .date-navigation {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, rgba(190, 190, 190, 0.1), rgba(63, 63, 63, 0.2));
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.593);
+            width: 10rem;
             position: absolute;
-            top: 10px; /* Adjust as needed for vertical offset */
-            right: 15px; /* Adjust as needed for horizontal offset */
+            top: 0px;
+            right: 1rem;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch; /* Ensure children stretch to the full width */
             gap: 0px;
         }
 
-
-        /* Smaller buttons */
-        button {
-            padding: 5px 10px;
-            font-size: 1em; /* Adjust for smaller size */
-            background-color: #040d13;
-            color: #2a9d8f;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        /* Change button size to make them smaller */
-        #prev-day, #next-day {
-            font-size: 1.2em; /* Make the buttons a bit smaller */
-            padding: 2px 8px;
-        }
-
-
-        /* Current date display */
         .current-date-box {
+            background: #ffffff00;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 0px;
+            font-size: 1.2em;
+            font-weight: bold;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 50px;
-            height: 50px;
-            font-size: 1em;
+            height: 100%
+            margin-bottom: 10px;
+            border: 1px solid black;
+            width: 100%; /* Ensure it stretches to the container width */
         }
 
-        .month {
-            background-color: red;
-            color: white;
-            padding: 2px 0;
-            width: 100%;
-            text-align: center;
-            border-radius: 4px 4px 0 0;
+        .button-container {
+            display: flex;
+            width: 100%; /* Ensure buttons fill the container width */
         }
 
-        .day {
-            background-color: white;
-            color: black;
-            font-weight: bold;
-            padding: 5px 0;
-            width: 100%;
-            text-align: center;
-            border-radius: 0 0 4px 4px;
+        button {
+            flex: 1; /* Each button takes up half the width of the container */
+            background: #ffffff00;
+            color: #fff;
+            border-radius: 0px;
+            border: 1px solid black; /* Add a thin black border */
+            font-size: 1.2em;
+            cursor: pointer;
+            height: 2rem;
+            display: flex;
+            justify-content: center; /* Center the text horizontally */
+            align-items: center; /* Center the text vertically */
         }
+
 
         /* Carousel container */
         .carousel-container {
@@ -231,16 +222,17 @@
 <body>
     <!-- Date Navigation Section -->
     <div class="date-navigation">
-        <button id="prev-day">&lt;</button>
-
         <!-- Current Date Box -->
-        <div id="current-date" class="current-date-box">
-            <div class="month"></div>
-            <div class="day"></div>
+        <div class="current-date-box" id="current-date-box">
+            <!-- Current date will be inserted here -->
         </div>
-
-        <button id="next-day">&gt;</button>
+        <!-- Container for the buttons -->
+        <div class="button-container">
+            <button id="prev-day">&lt;</button>
+            <button id="next-day">&gt;</button>
+        </div>
     </div>
+
 
     <!-- Title Box with title centered at the top -->
     <div class="title-box">
@@ -255,9 +247,8 @@
     <script>
         let lastScrollLeft = 0;
         const carouselContainer = document.getElementById('carousel-container');
-
+        const currentDateBox = document.getElementById('current-date-box');
         let currentDate = new Date();
-        const dateDisplay = document.getElementById('current-date');
 
         function formatDate(date) {
             return date.toISOString().split('T')[0];
@@ -268,8 +259,7 @@
             const formattedDate = currentDate.toLocaleDateString('en-US', options);
             const [month, day] = formattedDate.split(" ");
 
-            dateDisplay.querySelector('.month').textContent = month;
-            dateDisplay.querySelector('.day').textContent = day;
+            currentDateBox.textContent = `${month} ${day}`;
 
             fetchPapers(formatDate(currentDate));
         }
