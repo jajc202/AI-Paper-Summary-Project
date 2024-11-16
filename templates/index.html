@@ -48,33 +48,39 @@
 
         /* Date Navigation Container */
         .date-navigation {
+            background: linear-gradient(135deg, rgba(190, 190, 190, 0.1), rgba(63, 63, 63, 0.2)); /* Subtle gradient */
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.593);
             position: absolute;
             top: 0px;
             right: 50px;
             z-index: 10;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0px;
         }
 
         .current-date-box {
-            background-color: #2a9d8f;
-            color: #f3f3f3;
+            background: #ffffff00;
+            color: #fff;
             padding: 10px 20px;
             border-radius: 0px;
             font-size: 1.2em;
             font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 40px;  /* Ensure consistent height */
         }
 
         button {
-            padding: 0 15px;
-            font-size: 1.2em;
-            background-color: #2a9d8f;
+            background: #ffffff00;
             color: #fff;
+            padding: 10px 15px;
+            border-radius: 0px;
             border: none;
-            border-radius: 5px;
+            font-size: 1.2em;
             cursor: pointer;
-            height: 40px;
+            height: 40px;  /* Set button height to match the current-date-box */
             display: flex;
             justify-content: center;
             align-items: center;
