@@ -11,7 +11,7 @@ class PaperSummary:
     # Initialise the class
     def __init__(self):
         # Initialise the model (Llama 3.2 - 3B)
-        self.model = OllamaLLM(model="phi3:medium-128k", seed=44)
+        self.model = OllamaLLM(model="phi3:medium", seed=44)
 
     # Define function to summarize the text
     def paper_summarizer(self, text):
@@ -23,6 +23,7 @@ class PaperSummary:
             2) The specific area of AI it applies to
             3) The key findings
             4) How the findings can be used in real-world deployment
+        Make sure to start each new summary section with a number.
         """
 
         # Summarize the text
